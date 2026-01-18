@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>~/dev :: portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Three.js Import Map -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+</head>
+<body>
+    <!-- Boot sequence overlay -->
+    <div id="boot-overlay" class="boot-overlay">
+        <div class="boot-content">
+            <pre class="boot-text"></pre>
+            <span class="boot-cursor">_</span>
+        </div>
+    </div>
+
+    <!-- Scanline overlay (stays on top) -->
+    <div class="scanlines"></div>
+
+    <!-- Three.js container -->
+    <div id="threejs-container"></div>
+
+    <!-- Navigation HUD -->
+    <nav id="nav-hud" class="nav-hud">
+        <button class="nav-btn" data-direction="left" title="Skills (Left)">
+            <span class="nav-arrow">&#x25C0;</span>
+            <span class="nav-label">skills</span>
+        </button>
+        <button class="nav-btn" data-direction="front" title="Home (Front)">
+            <span class="nav-arrow">&#x25B2;</span>
+            <span class="nav-label">home</span>
+        </button>
+        <button class="nav-btn" data-direction="right" title="Projects (Right)">
+            <span class="nav-arrow">&#x25B6;</span>
+            <span class="nav-label">projects</span>
+        </button>
+        <button class="nav-btn" data-direction="back" title="Stats (Back)">
+            <span class="nav-arrow">&#x25BC;</span>
+            <span class="nav-label">stats</span>
+        </button>
+    </nav>
+
+    <!-- ═══ 3D PANELS ═══ -->
+
+    <!-- FRONT: Hero Panel -->
+    <div id="panel-hero" class="panel-3d">
+        <div class="panel-header">
+            <div class="window-controls">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+            </div>
+            <div class="panel-title">dan@dev ~ portfolio</div>
+        </div>
+        <div class="panel-content">
+            <div class="hero">
+                <div class="hero-ascii">
+                    <pre class="ascii-art">
+    ┌─────────────────────────────────────────────────────────┐
+    │                                                         │
+    │   ╔══════════════════════════════════════════════════╗  │
+    │   ║                                                  ║  │
+    │   ║    ██████╗ ███████╗██╗   ██╗                    ║  │
+    │   ║    ██╔══██╗██╔════╝██║   ██║                    ║  │
+    │   ║    ██║  ██║█████╗  ██║   ██║                    ║  │
+    │   ║    ██║  ██║██╔══╝  ╚██╗ ██╔╝                    ║  │
+    │   ║    ██████╔╝███████╗ ╚████╔╝                     ║  │
+    │   ║    ╚═════╝ ╚══════╝  ╚═══╝                      ║  │
+    │   ║                                                  ║  │
+    │   ╚══════════════════════════════════════════════════╝  │
+    │                                                         │
+    └─────────────────────────────────────────────────────────┘
+                    </pre>
+                </div>
+                <div class="hero-content">
+                    <div class="prompt-line">
+                        <span class="prompt">$</span>
+                        <span class="command">whoami</span>
+                    </div>
+                    <h1 class="glitch" data-text="Developer">Developer</h1>
+                    <p class="tagline typing">building systems that matter_</p>
+                </div>
+            </div>
+            <div class="panel-footer">
+                <span class="hint">&#x2190; skills</span>
+                <span class="hint">projects &#x2192;</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- LEFT: Skills Panel -->
+    <div id="panel-skills" class="panel-3d">
+        <div class="panel-header">
+            <div class="window-controls">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+            </div>
+            <div class="panel-title">skills.sh</div>
+        </div>
+        <div class="panel-content">
+            <h2 class="section-title">
+                <span class="bracket">[</span>
+                <span class="title-text">cat ~/skills</span>
+                <span class="bracket">]</span>
+            </h2>
+            <div class="skills-grid">
+                <div class="skill-card">
+                    <div class="skill-icon">
+<pre>┌──┐
+│▓▓│
+└──┘</pre>
+                    </div>
+                    <h3>backend</h3>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                    <div class="skill-tags">
+                        <span class="tag">rust</span>
+                        <span class="tag">go</span>
+                        <span class="tag">python</span>
+                    </div>
+                </div>
+
+                <div class="skill-card">
+                    <div class="skill-icon">
+<pre>╔══╗
+║░░║
+╚══╝</pre>
+                    </div>
+                    <h3>frontend</h3>
+                    <p>Sed do eiusmod tempor incididunt ut labore et dolore.</p>
+                    <div class="skill-tags">
+                        <span class="tag">typescript</span>
+                        <span class="tag">react</span>
+                        <span class="tag">css</span>
+                    </div>
+                </div>
+
+                <div class="skill-card">
+                    <div class="skill-icon">
+<pre>┏━━┓
+┃▒▒┃
+┗━━┛</pre>
+                    </div>
+                    <h3>devops</h3>
+                    <p>Ut enim ad minim veniam, quis nostrud exercitation.</p>
+                    <div class="skill-tags">
+                        <span class="tag">docker</span>
+                        <span class="tag">k8s</span>
+                        <span class="tag">linux</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT: Projects Panel -->
+    <div id="panel-projects" class="panel-3d">
+        <div class="panel-header">
+            <div class="window-controls">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+            </div>
+            <div class="panel-title">projects/</div>
+        </div>
+        <div class="panel-content">
+            <h2 class="section-title">
+                <span class="bracket">[</span>
+                <span class="title-text">ls -la ~/projects</span>
+                <span class="bracket">]</span>
+            </h2>
+            <div class="projects-list">
+                <div class="project-item">
+                    <span class="permissions">drwxr-xr-x</span>
+                    <span class="user">dan</span>
+                    <span class="size">4.2K</span>
+                    <span class="date">Jan 18</span>
+                    <span class="name"><a href="#">project-alpha/</a></span>
+                </div>
+                <div class="project-item">
+                    <span class="permissions">drwxr-xr-x</span>
+                    <span class="user">dan</span>
+                    <span class="size">2.1K</span>
+                    <span class="date">Jan 15</span>
+                    <span class="name"><a href="#">cli-toolkit/</a></span>
+                </div>
+                <div class="project-item">
+                    <span class="permissions">drwxr-xr-x</span>
+                    <span class="user">dan</span>
+                    <span class="size">8.7K</span>
+                    <span class="date">Jan 10</span>
+                    <span class="name"><a href="#">api-gateway/</a></span>
+                </div>
+                <div class="project-item">
+                    <span class="permissions">drwxr-xr-x</span>
+                    <span class="user">dan</span>
+                    <span class="size">1.3K</span>
+                    <span class="date">Dec 28</span>
+                    <span class="name"><a href="#">dotfiles/</a></span>
+                </div>
+            </div>
+            <div class="contact-section">
+                <div class="prompt-line">
+                    <span class="prompt">$</span>
+                    <span class="command">echo $CONTACT</span>
+                </div>
+                <div class="contact-links">
+                    <a href="#" class="link">github</a>
+                    <span class="separator">│</span>
+                    <a href="#" class="link">linkedin</a>
+                    <span class="separator">│</span>
+                    <a href="#" class="link">email</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BACK: Stats Panel -->
+    <div id="panel-stats" class="panel-3d">
+        <div class="panel-header">
+            <div class="window-controls">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+            </div>
+            <div class="panel-title">neofetch</div>
+        </div>
+        <div class="panel-content">
+            <div class="neofetch">
+                <div class="neofetch-ascii">
+<pre>
+       _,met$$$$$gg.
+    ,g$$$$$$$$$$$$$$$P.
+  ,g$$P"     """Y$$.".
+ ,$$P'              `$$$.
+',$$P       ,ggs.     `$$b:
+`d$$'     ,$P"'   .    $$$
+ $$P      d$'     ,    $$P
+ $$:      $$.   -    ,d$$'
+ $$;      Y$b._   _,d$P'
+ Y$$.    `.`"Y$$$$P"'
+ `$$b      "-.__
+  `Y$$
+   `Y$$.
+     `$$b.
+       `Y$$b.
+          `"Y$b._
+              `"""
+</pre>
+                </div>
+                <div class="neofetch-info">
+                    <div class="info-line"><span class="label">dan</span>@<span class="label">dev</span></div>
+                    <div class="info-divider">─────────────────</div>
+                    <div class="info-line"><span class="key">OS:</span> <span class="value">Arch Linux x86_64</span></div>
+                    <div class="info-line"><span class="key">Shell:</span> <span class="value">zsh 5.9</span></div>
+                    <div class="info-line"><span class="key">Editor:</span> <span class="value">neovim</span></div>
+                    <div class="info-line"><span class="key">WM:</span> <span class="value">hyprland</span></div>
+                    <div class="info-line"><span class="key">Terminal:</span> <span class="value">kitty</span></div>
+                    <div class="info-line"><span class="key">Theme:</span> <span class="value">catppuccin-mocha</span></div>
+                    <div class="info-divider">─────────────────</div>
+                    <div class="info-line"><span class="key">Projects:</span> <span class="value stat-num">42</span></div>
+                    <div class="info-line"><span class="key">Commits:</span> <span class="value stat-num">1,337</span></div>
+                    <div class="info-line"><span class="key">Coffee:</span> <span class="value stat-num">∞</span></div>
+                    <div class="color-blocks">
+                        <span class="block" style="background: #f38ba8;"></span>
+                        <span class="block" style="background: #fab387;"></span>
+                        <span class="block" style="background: #f9e2af;"></span>
+                        <span class="block" style="background: #a6e3a1;"></span>
+                        <span class="block" style="background: #89dceb;"></span>
+                        <span class="block" style="background: #cba6f7;"></span>
+                        <span class="block" style="background: #f5c2e7;"></span>
+                        <span class="block" style="background: #b4befe;"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer">
+                <span class="comment"># built with vim and caffeine</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Legacy effects script (typing, glitch) -->
+    <script src="script.js"></script>
+
+    <!-- Three.js 3D scene -->
+    <script type="module" src="js/three-setup.js"></script>
+</body>
+</html>
