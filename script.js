@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initGlitchOnHover();
     initTerminalEffects();
     initNavHUD();
+    initSkillButtons();
 
     // Note: Gyroscope controls are now handled by camera-controls.js for 3D
     // Scroll animations removed - not needed in 3D mode
@@ -82,6 +83,94 @@ function initTerminalEffects() {
             card.style.borderColor = 'var(--surface1)';
             card.style.boxShadow = 'none';
         });
+    });
+}
+
+/* ═══ Skill File Icons ═══ */
+function initSkillButtons() {
+    const skillPopup = document.getElementById('skill-popup');
+    const skillPopupBody = document.getElementById('skill-popup-body');
+
+    if (!skillPopup || !skillPopupBody) return;
+
+    // Skill position mapping
+    const skillPositions = {
+        'backend': 'top-left',
+        'frontend': 'top-right',
+        'devops': 'bottom'
+    };
+
+    // Helper to handle skill file activation
+    function handleSkillClick(skillFile) {
+        const skillName = skillFile.dataset.skill;
+        const template = document.getElementById(`skill-${skillName}`);
+
+        if (template) {
+            skillPopupBody.innerHTML = '';
+            skillPopupBody.appendChild(template.content.cloneNode(true));
+
+            // Use 3D popup if available
+            if (window.portfolioScene && window.portfolioScene.showPopup) {
+                const position = skillPositions[skillName] || 'center';
+                window.portfolioScene.showPopup(position);
+            } else {
+                skillPopup.classList.add('active');
+            }
+            addTerminalFeedback(`cat ~/skills/${skillName}`);
+        }
+    }
+
+    // Helper to close popup
+    function closePopup() {
+        if (window.portfolioScene && window.portfolioScene.hidePopup) {
+            window.portfolioScene.hidePopup();
+        } else {
+            skillPopup.classList.remove('active');
+        }
+        addTerminalFeedback('q');
+    }
+
+    // Click handler for skill file icons
+    document.addEventListener('click', (e) => {
+        const skillFile = e.target.closest('.skill-file');
+        if (skillFile) {
+            e.preventDefault();
+            e.stopPropagation();
+            handleSkillClick(skillFile);
+            return;
+        }
+
+        // Close popup when clicking close button
+        if (e.target.closest('.skill-popup-close')) {
+            e.preventDefault();
+            e.stopPropagation();
+            closePopup();
+            return;
+        }
+    });
+
+    // Also handle touchend for more reliable mobile taps
+    document.addEventListener('touchend', (e) => {
+        const skillFile = e.target.closest('.skill-file');
+        if (skillFile) {
+            e.preventDefault();
+            handleSkillClick(skillFile);
+            return;
+        }
+
+        if (e.target.closest('.skill-popup-close')) {
+            e.preventDefault();
+            closePopup();
+            return;
+        }
+    }, { passive: false });
+
+    // Close on escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && skillPopup.classList.contains('active')) {
+            closePopup();
+            e.stopPropagation();
+        }
     });
 }
 
@@ -172,15 +261,28 @@ window.addTerminalFeedback = addTerminalFeedback;
 /* ═══ Console Easter Egg ═══ */
 console.log(`
 %c
-    ┌─────────────────────────────────────┐
-    │                                     │
-    │   Welcome to the console, hacker.   │
-    │                                     │
-    │   > You found the easter egg        │
-    │   > Drag mouse or tilt device       │
-    │   > to look around the 3D space     │
-    │                                     │
-    └─────────────────────────────────────┘
+........................................
+..................%+%@..................
+................@+:.%%%%@@................
+..............@+:...%%%%%%%%@@..............
+............@+:....:*%%%%%%%%%%%%@............
+...........%-....:===+*%%%%%%%%#@...........
+...........%*+=:==+=++++####%...........
+...........%***+=++++++++###%...........
+...........%***+=++++++++###%...........
+...........%***++++++++++###%...........
+...........%***++++++++++###%...........
+...........%***+++++++++*###%...........
+...........%****+++++++++###%...........
+...........%*#%%%%#*+++++++++*%...........
+............@%%%%%%%%%%#++++++++#............
+.............@@%%%%%%%%%%+++++%..............
+...............@@%%%%%%+++#@...............
+.................@@%+#@.................
+...................@@...................
+........................................
+
+       IT'S A SECRET TO EVERYBODY
 `, 'color: #89b4fa; font-family: monospace;');
 
 /* ═══ Keyboard Shortcuts for 3D Navigation ═══ */

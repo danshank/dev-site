@@ -35,6 +35,15 @@ export class CameraControls {
         // Touch state
         this.previousTouch = { x: 0, y: 0 };
         this.touchStartTime = 0;
+        this.isPinching = false;
+        this.previousPinchDistance = 0;
+
+        // Zoom state (FOV-based zoom)
+        this.baseFov = 60;
+        this.targetFov = 60;
+        this.minFov = 30;  // Max zoom in
+        this.maxFov = 90;  // Max zoom out
+        this.zoomSpeed = 0.5;
 
         // Gyroscope state
         this.gyroEnabled = false;
@@ -58,6 +67,24 @@ export class CameraControls {
         this.updateCameraRotation();
     }
 
+    // ═══ HELPER: Check if element is interactive ═══
+
+    isInteractiveElement(element) {
+        // Check if the element or any parent is interactive
+        const interactiveSelectors = [
+            'button', 'a', 'input', 'select', 'textarea',
+            '.skill-file', '.skill-btn', '.nav-btn', '.skill-popup-close',
+            '.skill-popup-3d', '.window-controls', '.dot', '.link', '.project-item a'
+        ];
+
+        for (const selector of interactiveSelectors) {
+            if (element.matches && element.matches(selector)) return true;
+            if (element.closest && element.closest(selector)) return true;
+        }
+
+        return false;
+    }
+
     // ═══ MOUSE CONTROLS (Desktop) ═══
 
     setupMouseControls() {
@@ -65,13 +92,27 @@ export class CameraControls {
         this.domElement.addEventListener('mousemove', (e) => this.onMouseMove(e));
         this.domElement.addEventListener('mouseup', () => this.onMouseUp());
         this.domElement.addEventListener('mouseleave', () => this.onMouseUp());
+        this.domElement.addEventListener('wheel', (e) => this.onMouseWheel(e), { passive: false });
 
         // Cursor style
         this.domElement.style.cursor = 'grab';
     }
 
+    onMouseWheel(event) {
+        if (!this.enabled) return;
+
+        event.preventDefault();
+
+        // Scroll up = zoom in (decrease FOV), scroll down = zoom out (increase FOV)
+        this.targetFov += event.deltaY * 0.05;
+        this.targetFov = Math.max(this.minFov, Math.min(this.maxFov, this.targetFov));
+    }
+
     onMouseDown(event) {
         if (!this.enabled) return;
+
+        // Don't start drag if clicking on interactive elements
+        if (this.isInteractiveElement(event.target)) return;
 
         this.isDragging = true;
         this.previousMouse.x = event.clientX;
@@ -107,21 +148,57 @@ export class CameraControls {
     setupTouchControls() {
         this.domElement.addEventListener('touchstart', (e) => this.onTouchStart(e), { passive: false });
         this.domElement.addEventListener('touchmove', (e) => this.onTouchMove(e), { passive: false });
-        this.domElement.addEventListener('touchend', () => this.onTouchEnd());
+        this.domElement.addEventListener('touchend', (e) => this.onTouchEnd(e));
     }
 
     onTouchStart(event) {
-        if (!this.enabled || this.gyroEnabled) return;
-        if (event.touches.length !== 1) return;
+        if (!this.enabled) return;
 
-        event.preventDefault();
-        this.touchStartTime = Date.now();
-        this.previousTouch.x = event.touches[0].clientX;
-        this.previousTouch.y = event.touches[0].clientY;
+        // Don't capture touch if on interactive elements - let them handle it
+        if (this.isInteractiveElement(event.target)) return;
+
+        // Handle pinch start (two fingers)
+        if (event.touches.length === 2) {
+            event.preventDefault();
+            this.isPinching = true;
+            this.previousPinchDistance = this.getPinchDistance(event.touches);
+            return;
+        }
+
+        // Single touch for drag (only if gyro is off)
+        if (event.touches.length === 1 && !this.gyroEnabled) {
+            event.preventDefault();
+            this.touchStartTime = Date.now();
+            this.previousTouch.x = event.touches[0].clientX;
+            this.previousTouch.y = event.touches[0].clientY;
+        }
+    }
+
+    getPinchDistance(touches) {
+        const dx = touches[0].clientX - touches[1].clientX;
+        const dy = touches[0].clientY - touches[1].clientY;
+        return Math.sqrt(dx * dx + dy * dy);
     }
 
     onTouchMove(event) {
-        if (!this.enabled || this.gyroEnabled) return;
+        if (!this.enabled) return;
+
+        // Handle pinch zoom (two fingers)
+        if (event.touches.length === 2 && this.isPinching) {
+            event.preventDefault();
+            const currentDistance = this.getPinchDistance(event.touches);
+            const delta = currentDistance - this.previousPinchDistance;
+
+            // Pinch out = zoom in (decrease FOV), pinch in = zoom out (increase FOV)
+            this.targetFov -= delta * this.zoomSpeed * 0.1;
+            this.targetFov = Math.max(this.minFov, Math.min(this.maxFov, this.targetFov));
+
+            this.previousPinchDistance = currentDistance;
+            return;
+        }
+
+        // Single touch drag (only if gyro is off)
+        if (this.gyroEnabled) return;
         if (event.touches.length !== 1) return;
 
         event.preventDefault();
@@ -140,8 +217,11 @@ export class CameraControls {
         this.previousTouch.y = touch.clientY;
     }
 
-    onTouchEnd() {
-        // Could add momentum/inertia here
+    onTouchEnd(event) {
+        // Reset pinch state when fingers are lifted
+        if (!event || event.touches.length < 2) {
+            this.isPinching = false;
+        }
     }
 
     // ═══ KEYBOARD CONTROLS ═══
@@ -256,16 +336,16 @@ export class CameraControls {
         }
 
         // Convert device orientation to camera rotation
-        // Alpha (compass) controls horizontal look
+        // Alpha (compass) controls horizontal look - positive so phone points where you look
         const alphaRad = THREE.MathUtils.degToRad(alpha - this.gyroAlphaOffset);
-        this.targetTheta = -alphaRad;
+        this.targetTheta = alphaRad;
 
         // Beta (tilt) controls vertical look
         // Neutral position is ~45-60 degrees (phone held at angle)
         const neutralBeta = 50;
         const betaDelta = beta - neutralBeta;
         const betaRad = THREE.MathUtils.degToRad(betaDelta);
-        this.targetPhi = (Math.PI / 2) + betaRad * 0.5;
+        this.targetPhi = (Math.PI / 2) - betaRad * 0.5; // Inverted so tilting up looks up
 
         // Clamp
         this.targetPhi = Math.max(this.minPhi, Math.min(this.maxPhi, this.targetPhi));
@@ -288,6 +368,13 @@ export class CameraControls {
         // Smooth interpolation toward target
         this.theta += (this.targetTheta - this.theta) * this.dampingFactor;
         this.phi += (this.targetPhi - this.phi) * this.dampingFactor;
+
+        // Smooth FOV interpolation for zoom
+        const currentFov = this.camera.fov;
+        if (Math.abs(currentFov - this.targetFov) > 0.1) {
+            this.camera.fov += (this.targetFov - currentFov) * this.dampingFactor;
+            this.camera.updateProjectionMatrix();
+        }
 
         this.updateCameraRotation();
     }
@@ -335,6 +422,41 @@ export class CameraControls {
     // Snap to look back (stats)
     lookAtBack(instant = false) {
         this.lookAt(Math.PI, Math.PI / 2, instant);
+    }
+
+    // Gently nudge camera toward a skill popup position
+    // position: 'top-left', 'top-right', 'bottom', or 'center'
+    lookAtSkillPopup(position = 'center') {
+        // Base angle for skills panel (60 degrees left)
+        const baseTheta = -Math.PI / 3;
+
+        // Small offsets based on popup position
+        let thetaOffset = 0;
+        let phiOffset = 0;
+
+        switch (position) {
+            case 'top-left':
+                thetaOffset = -0.35; // Pan further left to center on popup
+                phiOffset = -0.15;   // Slightly up
+                break;
+            case 'top-right':
+                thetaOffset = 0.35;  // Pan further right to center on popup
+                phiOffset = -0.15;   // Slightly up
+                break;
+            case 'bottom':
+                thetaOffset = 0;
+                phiOffset = 0.15;    // Slightly down
+                break;
+            default:
+                thetaOffset = 0;
+                phiOffset = 0;
+        }
+
+        this.targetTheta = baseTheta + thetaOffset;
+        this.targetPhi = (Math.PI / 2) + phiOffset;
+
+        // Clamp phi
+        this.targetPhi = Math.max(this.minPhi, Math.min(this.maxPhi, this.targetPhi));
     }
 
     // Get current viewing direction name

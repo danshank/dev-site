@@ -64,7 +64,7 @@
                 <span class="dot yellow"></span>
                 <span class="dot green"></span>
             </div>
-            <div class="panel-title">dan@dev ~ portfolio</div>
+            <div class="panel-title">dan@shank.dev ~ portfolio</div>
         </div>
         <div class="panel-content">
             <div class="hero">
@@ -74,12 +74,12 @@
     │                                                         │
     │   ╔══════════════════════════════════════════════════╗  │
     │   ║                                                  ║  │
-    │   ║    ██████╗ ███████╗██╗   ██╗                    ║  │
-    │   ║    ██╔══██╗██╔════╝██║   ██║                    ║  │
-    │   ║    ██║  ██║█████╗  ██║   ██║                    ║  │
-    │   ║    ██║  ██║██╔══╝  ╚██╗ ██╔╝                    ║  │
-    │   ║    ██████╔╝███████╗ ╚████╔╝                     ║  │
-    │   ║    ╚═════╝ ╚══════╝  ╚═══╝                      ║  │
+    │   ║    ██████╗ ███████╗██╗   ██╗                     ║  │
+    │   ║    ██╔══██╗██╔════╝██║   ██║                     ║  │
+    │   ║    ██║  ██║█████╗  ██║   ██║                     ║  │
+    │   ║    ██║  ██║██╔══╝  ╚██╗ ██╔╝                     ║  │
+    │   ║    ██████╔╝███████╗ ╚████╔╝                      ║  │
+    │   ║    ╚═════╝ ╚══════╝  ╚═══╝                       ║  │
     │   ║                                                  ║  │
     │   ╚══════════════════════════════════════════════════╝  │
     │                                                         │
@@ -94,10 +94,19 @@
                     <h1 class="glitch" data-text="Developer">Developer</h1>
                     <p class="tagline typing">building systems that matter_</p>
                 </div>
+            <div class="contact-section">
+                <div class="prompt-line">
+                    <span class="prompt">$</span>
+                    <span class="command">echo $CONTACT</span>
+                </div>
+                <div class="contact-links">
+                    <a href="#" class="link">github</a>
+                    <span class="separator">│</span>
+                    <a href="#" class="link">linkedin</a>
+                    <span class="separator">│</span>
+                    <a href="#" class="link">email</a>
+                </div>
             </div>
-            <div class="panel-footer">
-                <span class="hint">&#x2190; skills</span>
-                <span class="hint">projects &#x2192;</span>
             </div>
         </div>
     </div>
@@ -110,59 +119,132 @@
                 <span class="dot yellow"></span>
                 <span class="dot green"></span>
             </div>
-            <div class="panel-title">skills.sh</div>
+            <div class="panel-title">~/skills</div>
         </div>
-        <div class="panel-content">
+        <div class="panel-content skills-panel-content">
             <h2 class="section-title">
                 <span class="bracket">[</span>
-                <span class="title-text">cat ~/skills</span>
+                <span class="title-text">ls ~/skills</span>
                 <span class="bracket">]</span>
             </h2>
-            <div class="skills-grid">
-                <div class="skill-card">
-                    <div class="skill-icon">
-<pre>┌──┐
-│▓▓│
-└──┘</pre>
+            <div class="skills-files">
+                <button class="skill-file" data-skill="backend">
+                    <div class="file-icon">
+<pre>┌───┐
+│ ▓ │
+└───┘</pre>
                     </div>
-                    <h3>backend</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                    <div class="skill-tags">
-                        <span class="tag">rust</span>
-                        <span class="tag">go</span>
-                        <span class="tag">python</span>
+                    <span class="file-name">backend.sh</span>
+                </button>
+                <button class="skill-file" data-skill="frontend">
+                    <div class="file-icon">
+<pre>╔═══╗
+║ ░ ║
+╚═══╝</pre>
                     </div>
-                </div>
+                    <span class="file-name">frontend.ts</span>
+                </button>
+                <button class="skill-file" data-skill="devops">
+                    <div class="file-icon">
+<pre>┏━━━┓
+┃ ▒ ┃
+┗━━━┛</pre>
+                    </div>
+                    <span class="file-name">devops.yml</span>
+                </button>
+            </div>
+        </div>
+    </div>
 
-                <div class="skill-card">
-                    <div class="skill-icon">
-<pre>╔══╗
-║░░║
-╚══╝</pre>
-                    </div>
-                    <h3>frontend</h3>
-                    <p>Sed do eiusmod tempor incididunt ut labore et dolore.</p>
-                    <div class="skill-tags">
-                        <span class="tag">typescript</span>
-                        <span class="tag">react</span>
-                        <span class="tag">css</span>
-                    </div>
-                </div>
+    <!-- Skill Detail Data (hidden, used by JS) -->
+    <template id="skill-backend">
+        <div class="skill-icon-large">
+<pre>┌────┐
+│▓▓▓▓│
+│▓▓▓▓│
+└────┘</pre>
+        </div>
+        <h3>backend</h3>
+        <pre><code class="language-bash">#!/bin/bash
 
-                <div class="skill-card">
-                    <div class="skill-icon">
-<pre>┏━━┓
-┃▒▒┃
-┗━━┛</pre>
-                    </div>
-                    <h3>devops</h3>
-                    <p>Ut enim ad minim veniam, quis nostrud exercitation.</p>
-                    <div class="skill-tags">
-                        <span class="tag">docker</span>
-                        <span class="tag">k8s</span>
-                        <span class="tag">linux</span>
-                    </div>
-                </div>
+# backend.sh
+data | hash | cache
+
+api_design="ergonomic"
+if [[ $RANDOM % 2 -eq 0 ]]; then
+    llm --one-shot --success-rate 100%
+fi
+
+declare -A promises=(
+    ["RESTful"]=true
+    ["backwards_compatible"]=true
+)
+
+observability() {
+    local tool=$1
+    case $tool in
+        datadog) echo "cool" ;;
+        grafana|otel) echo "covers 95% of use cases" ;;
+    esac
+}
+
+</code></pre>
+        <div class="skill-tags">
+            <span class="tag">go</span>
+            <span class="tag">c#</span>
+            <span class="tag">python</span>
+            <span class="tag">rust</span>
+            <span class="tag">SQL</span>
+            <span class="tag">redis</span>
+        </div>
+    </template>
+    <template id="skill-frontend">
+        <div class="skill-icon-large">
+<pre>╔════╗
+║░░░░║
+║░░░░║
+╚════╝</pre>
+        </div>
+        <h3>frontend</h3>
+        <p>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        <div class="skill-tags">
+            <span class="tag">typescript</span>
+            <span class="tag">react</span>
+            <span class="tag">three.js</span>
+        </div>
+    </template>
+    <template id="skill-devops">
+        <div class="skill-icon-large">
+<pre>┏━━━━┓
+┃▒▒▒▒┃
+┃▒▒▒▒┃
+┗━━━━┛</pre>
+        </div>
+        <h3>devops</h3>
+        <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
+        <div class="skill-tags">
+            <span class="tag">docker</span>
+            <span class="tag">kubernetes</span>
+            <span class="tag">linux</span>
+            <span class="tag">terraform</span>
+            <span class="tag">ci/cd</span>
+        </div>
+    </template>
+
+    <!-- Skill Detail Popup (3D panel) -->
+    <div id="skill-popup" class="skill-popup-3d">
+        <div class="panel-header">
+            <div class="window-controls">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+            </div>
+            <div class="panel-title">cat skill.md</div>
+            <button class="skill-popup-close">&times;</button>
+        </div>
+        <div class="panel-content">
+            <div class="skill-popup-body" id="skill-popup-body">
+                <!-- Populated by JS -->
             </div>
         </div>
     </div>
@@ -213,19 +295,6 @@
                     <span class="name"><a href="#">dotfiles/</a></span>
                 </div>
             </div>
-            <div class="contact-section">
-                <div class="prompt-line">
-                    <span class="prompt">$</span>
-                    <span class="command">echo $CONTACT</span>
-                </div>
-                <div class="contact-links">
-                    <a href="#" class="link">github</a>
-                    <span class="separator">│</span>
-                    <a href="#" class="link">linkedin</a>
-                    <span class="separator">│</span>
-                    <a href="#" class="link">email</a>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -263,18 +332,15 @@
 </pre>
                 </div>
                 <div class="neofetch-info">
-                    <div class="info-line"><span class="label">dan</span>@<span class="label">dev</span></div>
+                    <div class="info-line"><span class="label">dan</span>@<span class="label">shank.dev</span></div>
                     <div class="info-divider">─────────────────</div>
-                    <div class="info-line"><span class="key">OS:</span> <span class="value">Arch Linux x86_64</span></div>
-                    <div class="info-line"><span class="key">Shell:</span> <span class="value">zsh 5.9</span></div>
+                    <div class="info-line"><span class="key">OS:</span> <span class="value">Debian</span></div>
+                    <div class="info-line"><span class="key">Shell:</span> <span class="value">zsh</span></div>
                     <div class="info-line"><span class="key">Editor:</span> <span class="value">neovim</span></div>
-                    <div class="info-line"><span class="key">WM:</span> <span class="value">hyprland</span></div>
-                    <div class="info-line"><span class="key">Terminal:</span> <span class="value">kitty</span></div>
-                    <div class="info-line"><span class="key">Theme:</span> <span class="value">catppuccin-mocha</span></div>
                     <div class="info-divider">─────────────────</div>
-                    <div class="info-line"><span class="key">Projects:</span> <span class="value stat-num">42</span></div>
-                    <div class="info-line"><span class="key">Commits:</span> <span class="value stat-num">1,337</span></div>
-                    <div class="info-line"><span class="key">Coffee:</span> <span class="value stat-num">∞</span></div>
+                    <div class="info-line"><span class="key">Projects:</span> <span class="value stat-num">Too many</span></div>
+                    <div class="info-line"><span class="key">Commits:</span> <span class="value stat-num">Too few</span></div>
+                    <div class="info-line"><span class="key">Coffee:</span> <span class="value stat-num">By ssh<span></div>
                     <div class="color-blocks">
                         <span class="block" style="background: #f38ba8;"></span>
                         <span class="block" style="background: #fab387;"></span>
@@ -288,7 +354,7 @@
                 </div>
             </div>
             <div class="panel-footer">
-                <span class="comment"># built with vim and caffeine</span>
+                <span class="comment"># built with Three.js</span>
             </div>
         </div>
     </div>

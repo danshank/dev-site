@@ -835,8 +835,6 @@ body.minimized .terminal-footer {
 
 .panel-content {
     padding: 1.5rem;
-    max-height: 500px;
-    overflow-y: auto;
 }
 
 .panel-footer {
@@ -857,7 +855,152 @@ body.minimized .terminal-footer {
     font-size: 0.8rem;
 }
 
-/* ═══ Skills Grid (for panel) ═══ */
+/* ═══ Skills Panel - File Icons ═══ */
+.skills-panel-content {
+    position: relative;
+}
+
+.skills-files {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.skill-file {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: var(--font-mono);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    pointer-events: auto;
+}
+
+.skill-file:hover {
+    background: var(--surface0);
+    border-color: var(--surface1);
+}
+
+.skill-file:hover .file-icon pre {
+    color: var(--accent-secondary);
+    transform: scale(1.1);
+}
+
+.skill-file:hover .file-name {
+    color: var(--accent-primary);
+}
+
+.file-icon pre {
+    font-size: 1.2rem;
+    line-height: 1.1;
+    color: var(--accent-primary);
+    transition: all 0.2s ease;
+    margin: 0;
+}
+
+.file-name {
+    font-size: 0.8rem;
+    color: var(--subtext0);
+    transition: color 0.2s ease;
+}
+
+/* ═══ Skill Popup 3D Panel ═══ */
+.skill-popup-3d {
+    position: absolute;
+    width: 450px;
+    max-width: 90vw;
+    background: var(--bg-secondary);
+    border: 2px solid var(--accent-secondary);
+    border-radius: var(--radius);
+    overflow: hidden;
+    backface-visibility: hidden;
+    box-shadow:
+        0 0 50px rgba(203, 166, 247, 0.4),
+        inset 0 0 60px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.skill-popup-3d.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.skill-popup-3d.fading {
+    opacity: 0;
+}
+
+.skill-popup-3d .panel-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.skill-popup-3d .skill-popup-close {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: var(--overlay1);
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    transition: color 0.2s ease;
+    font-family: var(--font-mono);
+    pointer-events: auto;
+}
+
+.skill-popup-3d .skill-popup-close:hover {
+    color: var(--red);
+}
+
+.skill-popup-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1rem 0;
+}
+
+.skill-popup-body h3 {
+    color: var(--accent-secondary);
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    text-transform: lowercase;
+}
+
+.skill-popup-body p {
+    color: var(--subtext0);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.skill-icon-large {
+    margin-bottom: 1rem;
+}
+
+.skill-icon-large pre {
+    font-size: 2rem;
+    line-height: 1.2;
+    color: var(--accent-primary);
+}
+
+.skill-popup-body .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+/* Legacy skill-card styles (keep for fallback) */
 .skills-grid {
     display: flex;
     flex-direction: column;
