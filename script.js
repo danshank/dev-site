@@ -90,10 +90,11 @@ function initTerminalEffects() {
 function initSkillButtons() {
     const skillPopup = document.getElementById('skill-popup');
     const skillPopupBody = document.getElementById('skill-popup-body');
+    const skillPopupTitle = document.getElementById('skill-popup-title');
 
     if (!skillPopup || !skillPopupBody) return;
 
-    // Skill position mapping
+    // Skill position mapping (key is the base name without extension)
     const skillPositions = {
         'backend': 'top-left',
         'frontend': 'top-right',
@@ -109,9 +110,16 @@ function initSkillButtons() {
             skillPopupBody.innerHTML = '';
             skillPopupBody.appendChild(template.content.cloneNode(true));
 
+            // Update the popup title to show the skill filename
+            if (skillPopupTitle) {
+                skillPopupTitle.textContent = `cat ${skillName}`;
+            }
+
             // Use 3D popup if available
             if (window.portfolioScene && window.portfolioScene.showPopup) {
-                const position = skillPositions[skillName] || 'center';
+                // Extract base name (e.g., 'backend.sh' -> 'backend')
+                const baseName = skillName.split('.')[0];
+                const position = skillPositions[baseName] || 'center';
                 window.portfolioScene.showPopup(position);
             } else {
                 skillPopup.classList.add('active');
@@ -167,7 +175,9 @@ function initSkillButtons() {
 
     // Close on escape key
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && skillPopup.classList.contains('active')) {
+        const isPopupVisible = window.portfolioScene?.isPopupVisible?.() ||
+                               skillPopup.classList.contains('active');
+        if (e.key === 'Escape' && isPopupVisible) {
             closePopup();
             e.stopPropagation();
         }

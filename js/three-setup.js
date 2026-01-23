@@ -10,6 +10,129 @@ import {
 } from "three/addons/renderers/CSS3DRenderer.js";
 import { CameraControls } from "./camera-controls.js";
 
+/**
+ * Centralized state manager for the skill popup.
+ * Uses an explicit state machine to prevent timing bugs.
+ */
+class PopupStateManager {
+	static STATES = {
+		CLOSED: "closed",
+		OPENING: "opening",
+		OPEN: "open",
+		CLOSING: "closing",
+	};
+
+	constructor(popupElement, options = {}) {
+		this.element = popupElement;
+		this.state = PopupStateManager.STATES.CLOSED;
+		this.transitionDuration = options.transitionDuration || 150;
+		this.pendingTransition = null;
+
+		this.onStateChange = options.onStateChange || (() => {});
+		this.onPositionNeeded = options.onPositionNeeded || (() => {});
+	}
+
+	getState() {
+		return this.state;
+	}
+
+	isVisible() {
+		return (
+			this.state === PopupStateManager.STATES.OPENING ||
+			this.state === PopupStateManager.STATES.OPEN
+		);
+	}
+
+	isInteractive() {
+		return this.state === PopupStateManager.STATES.OPEN;
+	}
+
+	open(position = "center") {
+		this.cancelPendingTransition();
+
+		const prevState = this.state;
+
+		// If already open, just reposition
+		if (this.state === PopupStateManager.STATES.OPEN) {
+			this.onPositionNeeded(position);
+			return;
+		}
+
+		// If closing, restart from current visual state
+		if (this.state === PopupStateManager.STATES.CLOSING) {
+			this.element.classList.remove("fading");
+		}
+
+		// Position before showing
+		this.onPositionNeeded(position);
+
+		// Transition to OPENING
+		this.state = PopupStateManager.STATES.OPENING;
+		this.element.classList.add("active");
+		this.element.classList.remove("interactive");
+
+		this.onStateChange(this.state, prevState);
+
+		// After transition, become fully OPEN
+		this.pendingTransition = setTimeout(() => {
+			this.pendingTransition = null;
+			if (this.state === PopupStateManager.STATES.OPENING) {
+				const prev = this.state;
+				this.state = PopupStateManager.STATES.OPEN;
+				this.element.classList.add("interactive");
+				this.onStateChange(this.state, prev);
+			}
+		}, this.transitionDuration);
+	}
+
+	close() {
+		this.cancelPendingTransition();
+
+		if (
+			this.state === PopupStateManager.STATES.CLOSED ||
+			this.state === PopupStateManager.STATES.CLOSING
+		) {
+			return;
+		}
+
+		const prevState = this.state;
+
+		// Immediately remove interactivity
+		this.element.classList.remove("interactive");
+
+		// Transition to CLOSING
+		this.state = PopupStateManager.STATES.CLOSING;
+		this.element.classList.add("fading");
+
+		this.onStateChange(this.state, prevState);
+
+		// After transition, become fully CLOSED
+		this.pendingTransition = setTimeout(() => {
+			this.pendingTransition = null;
+			if (this.state === PopupStateManager.STATES.CLOSING) {
+				const prev = this.state;
+				this.state = PopupStateManager.STATES.CLOSED;
+				this.element.classList.remove("active", "fading");
+				this.onStateChange(this.state, prev);
+			}
+		}, this.transitionDuration);
+	}
+
+	cancelPendingTransition() {
+		if (this.pendingTransition) {
+			clearTimeout(this.pendingTransition);
+			this.pendingTransition = null;
+		}
+	}
+
+	forceClose() {
+		this.cancelPendingTransition();
+		this.state = PopupStateManager.STATES.CLOSED;
+		this.element.classList.remove("active", "fading", "interactive");
+		this.onStateChange(this.state, null);
+	}
+}
+
 class PortfolioScene {
 	constructor() {
 		this.camera = null;
@@ -20,6 +143,7 @@ class PortfolioScene {
 		this.controls = null;
 		this.panels = [];
 		this.isInitialized = false;
+		this.popupState = null;
 
 		// Panel configuration
 		// Panels at 60 degrees (PI/3) from front for clear separation
@@ -258,27 +382,28 @@ class PortfolioScene {
 		const skillsConfig = this.panelConfig.skills;
 		this.skillsPanelPosition = skillsConfig.position.clone();
 		this.skillsPanelRotation = skillsConfig.rotation.clone();
+
+		// Initialize state manager
+		this.popupState = new PopupStateManager(popupElement, {
+			transitionDuration: 150,
+			onStateChange: (newState, oldState) => {
+				console.debug(`Popup: ${oldState} -> ${newState}`);
+			},
+			onPositionNeeded: (position) => {
+				this.positionPopup(position);
+			},
+		});
 	}
 
 	showPopup(position = "center") {
-		if (!this.popupObject || !this.popupElement) return;
+		if (!this.popupState) return;
 
 		// Gently pan camera toward the popup position
 		if (this.controls && this.controls.lookAtSkillPopup) {
 			this.controls.lookAtSkillPopup(position);
 		}
 
-		// If already showing, fade out first then show new position
-		if (this.popupElement.classList.contains("active")) {
-			this.popupElement.classList.add("fading");
-			setTimeout(() => {
-				this.positionPopup(position);
-				this.popupElement.classList.remove("fading");
-			}, 150);
-		} else {
-			this.positionPopup(position);
-			this.popupElement.classList.add("active");
-		}
+		this.popupState.open(position);
 	}
 
 	positionPopup(position) {
@@ -330,11 +455,21 @@ class PortfolioScene {
 	}
 
 	hidePopup() {
-		if (!this.popupElement) return;
-		this.popupElement.classList.add("fading");
-		setTimeout(() => {
-			this.popupElement.classList.remove("active", "fading");
-		}, 150);
+		if (!this.popupState) return;
+		this.popupState.close();
+
+		// Recenter camera on skills panel
+		if (this.controls && this.controls.lookAtLeft) {
+			this.controls.lookAtLeft();
+		}
+	}
+
+	isPopupVisible() {
+		return this.popupState ? this.popupState.isVisible() : false;
+	}
+
+	isPopupInteractive() {
+		return this.popupState ? this.popupState.isInteractive() : false;
 	}
 
 	createControls() {

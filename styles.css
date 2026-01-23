@@ -914,8 +914,8 @@ body.minimized .terminal-footer {
 /* ═══ Skill Popup 3D Panel ═══ */
 .skill-popup-3d {
     position: absolute;
-    width: 450px;
-    max-width: 90vw;
+    width: 540px;
+    max-width: 95vw;
     background: var(--bg-secondary);
     border: 2px solid var(--accent-secondary);
     border-radius: var(--radius);
@@ -931,11 +931,16 @@ body.minimized .terminal-footer {
 
 .skill-popup-3d.active {
     opacity: 1;
+    /* pointer-events controlled by .interactive class */
+}
+
+.skill-popup-3d.interactive {
     pointer-events: auto;
 }
 
 .skill-popup-3d.fading {
     opacity: 0;
+    pointer-events: none;  /* Prevent click interception during fade */
 }
 
 .skill-popup-3d .panel-header {
@@ -944,21 +949,9 @@ body.minimized .terminal-footer {
     gap: 1rem;
 }
 
-.skill-popup-3d .skill-popup-close {
-    margin-left: auto;
-    background: none;
-    border: none;
-    color: var(--overlay1);
-    font-size: 1.25rem;
-    cursor: pointer;
-    padding: 0.25rem 0.5rem;
-    transition: color 0.2s ease;
-    font-family: var(--font-mono);
+/* Red dot close button - ensure it stays clickable when popup is interactive */
+.skill-popup-3d .dot.skill-popup-close {
     pointer-events: auto;
-}
-
-.skill-popup-3d .skill-popup-close:hover {
-    color: var(--red);
 }
 
 .skill-popup-body {
@@ -981,6 +974,11 @@ body.minimized .terminal-footer {
     font-size: 0.9rem;
     line-height: 1.6;
     margin-bottom: 1.5rem;
+}
+
+.skill-popup-body pre {
+    text-align: left;
+    align-self: stretch;
 }
 
 .skill-icon-large {

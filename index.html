@@ -100,9 +100,9 @@
                     <span class="command">echo $CONTACT</span>
                 </div>
                 <div class="contact-links">
-                    <a href="#" class="link">github</a>
+                    <a href="https://github.com/danshank/" class="link">github</a>
                     <span class="separator">│</span>
-                    <a href="#" class="link">linkedin</a>
+                    <a href="https://www.linkedin.com/in/daniel-shank-dev/" class="link">linkedin</a>
                     <span class="separator">│</span>
                     <a href="#" class="link">email</a>
                 </div>
@@ -128,7 +128,7 @@
                 <span class="bracket">]</span>
             </h2>
             <div class="skills-files">
-                <button class="skill-file" data-skill="backend">
+                <button class="skill-file" data-skill="backend.sh">
                     <div class="file-icon">
 <pre>┌───┐
 │ ▓ │
@@ -136,7 +136,7 @@
                     </div>
                     <span class="file-name">backend.sh</span>
                 </button>
-                <button class="skill-file" data-skill="frontend">
+                <button class="skill-file" data-skill="frontend.ts">
                     <div class="file-icon">
 <pre>╔═══╗
 ║ ░ ║
@@ -144,7 +144,7 @@
                     </div>
                     <span class="file-name">frontend.ts</span>
                 </button>
-                <button class="skill-file" data-skill="devops">
+                <button class="skill-file" data-skill="devops.yml">
                     <div class="file-icon">
 <pre>┏━━━┓
 ┃ ▒ ┃
@@ -157,14 +157,7 @@
     </div>
 
     <!-- Skill Detail Data (hidden, used by JS) -->
-    <template id="skill-backend">
-        <div class="skill-icon-large">
-<pre>┌────┐
-│▓▓▓▓│
-│▓▓▓▓│
-└────┘</pre>
-        </div>
-        <h3>backend</h3>
+    <template id="skill-backend.sh">
         <pre><code class="language-bash">#!/bin/bash
 
 # backend.sh
@@ -198,36 +191,75 @@ observability() {
             <span class="tag">redis</span>
         </div>
     </template>
-    <template id="skill-frontend">
-        <div class="skill-icon-large">
-<pre>╔════╗
-║░░░░║
-║░░░░║
-╚════╝</pre>
-        </div>
-        <h3>frontend</h3>
-        <p>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+    <template id="skill-frontend.ts">
+        <pre><code class="language-typescript">// frontend.tsx
+import { mass, gravity } from 'physics';
+
+interface Props {
+  pixels: 'perfect' | 'close-enough';
+  animations: 'butter' | 'silky';
+}
+
+const Component: FC&lt;Props&gt; = ({ pixels, animations }) =&gt; {
+  const [state, setState] = useState&lt;'loading' | 'ready'&gt;('ready');
+
+  useEffect(() =&gt; {
+    // make it feel alive
+    requestAnimationFrame(breathe);
+  }, []);
+
+  return (
+    &lt;div style={{ touchAction: 'manipulation' }}&gt;
+      {state === 'ready' &amp;&amp; &lt;Canvas shadows /&gt;}
+    &lt;/div&gt;
+  );
+};
+
+</code></pre>
         <div class="skill-tags">
             <span class="tag">typescript</span>
             <span class="tag">react</span>
             <span class="tag">three.js</span>
+            <span class="tag">css</span>
+            <span class="tag">webgl</span>
         </div>
     </template>
-    <template id="skill-devops">
-        <div class="skill-icon-large">
-<pre>┏━━━━┓
-┃▒▒▒▒┃
-┃▒▒▒▒┃
-┗━━━━┛</pre>
-        </div>
-        <h3>devops</h3>
-        <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
+    <template id="skill-devops.yml">
+        <pre><code class="language-yaml"># devops.yml
+version: "whenever"
+
+services:
+  sanity:
+    image: debian:stable
+    restart: on-failure
+    environment:
+      - PAGER=less
+      - EDITOR=nvim
+
+pipeline:
+  stages:
+    - lint: "find the sins"
+    - test: "prove it works"
+    - deploy: "ship it"
+
+infrastructure:
+  provider: "the cloud"
+  replicas: 3  # because 2 is tempting fate
+  monitoring:
+    enabled: true
+    alert_on:
+      - "3am pages"
+      - "disk full"
+      - "certificate expiry"
+
+</code></pre>
         <div class="skill-tags">
             <span class="tag">docker</span>
             <span class="tag">kubernetes</span>
             <span class="tag">linux</span>
             <span class="tag">terraform</span>
             <span class="tag">ci/cd</span>
+            <span class="tag">aws</span>
         </div>
     </template>
 
@@ -235,12 +267,11 @@ observability() {
     <div id="skill-popup" class="skill-popup-3d">
         <div class="panel-header">
             <div class="window-controls">
-                <span class="dot red"></span>
+                <span class="dot red skill-popup-close"></span>
                 <span class="dot yellow"></span>
                 <span class="dot green"></span>
             </div>
-            <div class="panel-title">cat skill.md</div>
-            <button class="skill-popup-close">&times;</button>
+            <div class="panel-title" id="skill-popup-title">cat skill.md</div>
         </div>
         <div class="panel-content">
             <div class="skill-popup-body" id="skill-popup-body">

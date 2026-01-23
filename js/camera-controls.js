@@ -70,11 +70,17 @@ export class CameraControls {
     // ═══ HELPER: Check if element is interactive ═══
 
     isInteractiveElement(element) {
+        // Special handling for popup: only interactive when .interactive class present
+        const popup = element.closest('.skill-popup-3d');
+        if (popup) {
+            return popup.classList.contains('interactive');
+        }
+
         // Check if the element or any parent is interactive
         const interactiveSelectors = [
             'button', 'a', 'input', 'select', 'textarea',
             '.skill-file', '.skill-btn', '.nav-btn', '.skill-popup-close',
-            '.skill-popup-3d', '.window-controls', '.dot', '.link', '.project-item a'
+            '.window-controls', '.dot', '.link', '.project-item a'
         ];
 
         for (const selector of interactiveSelectors) {
@@ -90,12 +96,46 @@ export class CameraControls {
     setupMouseControls() {
         this.domElement.addEventListener('mousedown', (e) => this.onMouseDown(e));
         this.domElement.addEventListener('mousemove', (e) => this.onMouseMove(e));
-        this.domElement.addEventListener('mouseup', () => this.onMouseUp());
+        this.domElement.addEventListener('mouseup', (e) => this.onMouseUp(e));
         this.domElement.addEventListener('mouseleave', () => this.onMouseUp());
         this.domElement.addEventListener('wheel', (e) => this.onMouseWheel(e), { passive: false });
 
         // Cursor style
         this.domElement.style.cursor = 'grab';
+    }
+
+    // Find the actual interactive element at click coordinates (accounting for CSS3D transforms)
+    findInteractiveElementAtPoint(x, y) {
+        // List of interactive element selectors to check
+        const selectors = [
+            '.skill-file',
+            '.skill-popup-close',
+            '.nav-btn',
+            '.link',
+            '.project-item a',
+            'button',
+            'a'
+        ];
+
+        // Get all interactive elements
+        for (const selector of selectors) {
+            const elements = document.querySelectorAll(selector);
+            for (const el of elements) {
+                const rect = el.getBoundingClientRect();
+                // Check if click is within this element's transformed bounds
+                if (x >= rect.left && x <= rect.right &&
+                    y >= rect.top && y <= rect.bottom) {
+                    // Additional check: element must be visible
+                    const style = getComputedStyle(el);
+                    if (style.display !== 'none' &&
+                        style.visibility !== 'hidden' &&
+                        parseFloat(style.opacity) > 0) {
+                        return el;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     onMouseWheel(event) {
@@ -111,7 +151,19 @@ export class CameraControls {
     onMouseDown(event) {
         if (!this.enabled) return;
 
-        // Don't start drag if clicking on interactive elements
+        // Store starting position for click detection
+        this.mouseDownPos = { x: event.clientX, y: event.clientY };
+        this.mouseDownTime = Date.now();
+
+        // Check if there's an interactive element at this position
+        const interactiveEl = this.findInteractiveElementAtPoint(event.clientX, event.clientY);
+        if (interactiveEl) {
+            // Don't start dragging - this might be a click
+            this.pendingClick = interactiveEl;
+            return;
+        }
+
+        // Don't start drag if clicking on interactive elements (fallback check)
         if (this.isInteractiveElement(event.target)) return;
 
         this.isDragging = true;
@@ -138,7 +190,21 @@ export class CameraControls {
         this.previousMouse.y = event.clientY;
     }
 
-    onMouseUp() {
+    onMouseUp(event) {
+        // Handle pending click on interactive element
+        if (this.pendingClick && event) {
+            const dx = event.clientX - this.mouseDownPos.x;
+            const dy = event.clientY - this.mouseDownPos.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            const duration = Date.now() - this.mouseDownTime;
+
+            // If it was a quick tap without much movement, trigger the click
+            if (distance < 10 && duration < 300) {
+                this.pendingClick.click();
+            }
+            this.pendingClick = null;
+        }
+
         this.isDragging = false;
         this.domElement.style.cursor = 'grab';
     }
@@ -154,6 +220,25 @@ export class CameraControls {
     onTouchStart(event) {
         if (!this.enabled) return;
 
+        // Store touch start position for tap detection
+        if (event.touches.length === 1) {
+            this.touchStartPos = {
+                x: event.touches[0].clientX,
+                y: event.touches[0].clientY
+            };
+            this.touchStartTime = Date.now();
+
+            // Check for interactive element at touch position
+            const interactiveEl = this.findInteractiveElementAtPoint(
+                event.touches[0].clientX,
+                event.touches[0].clientY
+            );
+            if (interactiveEl) {
+                this.pendingTap = interactiveEl;
+                return; // Don't prevent default, let the tap potentially work
+            }
+        }
+
         // Don't capture touch if on interactive elements - let them handle it
         if (this.isInteractiveElement(event.target)) return;
 
@@ -161,6 +246,7 @@ export class CameraControls {
         if (event.touches.length === 2) {
             event.preventDefault();
             this.isPinching = true;
+            this.pendingTap = null; // Cancel tap on pinch
             this.previousPinchDistance = this.getPinchDistance(event.touches);
             return;
         }
@@ -168,7 +254,6 @@ export class CameraControls {
         // Single touch for drag (only if gyro is off)
         if (event.touches.length === 1 && !this.gyroEnabled) {
             event.preventDefault();
-            this.touchStartTime = Date.now();
             this.previousTouch.x = event.touches[0].clientX;
             this.previousTouch.y = event.touches[0].clientY;
         }
@@ -218,6 +303,21 @@ export class CameraControls {
     }
 
     onTouchEnd(event) {
+        // Handle pending tap on interactive element
+        if (this.pendingTap && event && event.changedTouches.length > 0) {
+            const touch = event.changedTouches[0];
+            const dx = touch.clientX - this.touchStartPos.x;
+            const dy = touch.clientY - this.touchStartPos.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            const duration = Date.now() - this.touchStartTime;
+
+            // If it was a quick tap without much movement, trigger the click
+            if (distance < 15 && duration < 400) {
+                this.pendingTap.click();
+            }
+            this.pendingTap = null;
+        }
+
         // Reset pinch state when fingers are lifted
         if (!event || event.touches.length < 2) {
             this.isPinching = false;
