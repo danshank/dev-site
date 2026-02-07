@@ -50,6 +50,9 @@ export class CameraControls {
         this.gyroCalibrated = false;
         this.gyroAlphaOffset = 0;
         this.gyroBetaOffset = 0;
+        // Camera angles at the moment gyro was enabled (for relative tracking)
+        this.gyroThetaBase = 0;
+        this.gyroPhiBase = 0;
 
         // Device detection
         this.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -363,7 +366,9 @@ export class CameraControls {
         button.innerHTML = `<span class="gyro-icon">&#x21BA;</span> Enable tilt`;
         button.className = 'gyro-button';
 
-        button.addEventListener('click', () => this.requestGyroPermission());
+        // Store the handler so we can remove it later
+        this.gyroPermissionHandler = () => this.requestGyroPermission();
+        button.addEventListener('click', this.gyroPermissionHandler);
         document.body.appendChild(button);
 
         this.gyroButton = button;
@@ -399,12 +404,17 @@ export class CameraControls {
         this.updateGyroButton(true);
         this.showGyroFeedback('Tilt enabled');
 
-        // Allow toggling
-        this.gyroButton.onclick = () => {
+        // Remove the permission request handler and replace with toggle
+        this.gyroButton.removeEventListener('click', this.gyroPermissionHandler);
+        this.gyroButton.addEventListener('click', () => {
             this.gyroEnabled = !this.gyroEnabled;
+            // Reset calibration when re-enabling so gyro maps to current camera position
+            if (this.gyroEnabled) {
+                this.gyroCalibrated = false;
+            }
             this.updateGyroButton(this.gyroEnabled);
             this.showGyroFeedback(this.gyroEnabled ? 'Tilt ON' : 'Tilt OFF');
-        };
+        });
     }
 
     updateGyroButton(enabled) {
@@ -428,24 +438,26 @@ export class CameraControls {
 
         if (alpha === null || beta === null) return;
 
-        // Calibrate on first reading
+        // Calibrate on first reading - capture both device orientation AND current camera angles
         if (!this.gyroCalibrated) {
             this.gyroAlphaOffset = alpha;
             this.gyroBetaOffset = beta;
+            // Store the current camera angles so gyro movement is relative to them
+            this.gyroThetaBase = this.targetTheta;
+            this.gyroPhiBase = this.targetPhi;
             this.gyroCalibrated = true;
         }
 
-        // Convert device orientation to camera rotation
-        // Alpha (compass) controls horizontal look - positive so phone points where you look
-        const alphaRad = THREE.MathUtils.degToRad(alpha - this.gyroAlphaOffset);
-        this.targetTheta = alphaRad;
+        // Convert device orientation to camera rotation (relative to calibration point)
+        // Alpha (compass) controls horizontal look - inverted so turning phone left looks left
+        const alphaDelta = THREE.MathUtils.degToRad(alpha - this.gyroAlphaOffset);
+        this.targetTheta = this.gyroThetaBase - alphaDelta;
 
         // Beta (tilt) controls vertical look
-        // Neutral position is ~45-60 degrees (phone held at angle)
-        const neutralBeta = 50;
-        const betaDelta = beta - neutralBeta;
+        // Calculate delta from calibrated beta position
+        const betaDelta = beta - this.gyroBetaOffset;
         const betaRad = THREE.MathUtils.degToRad(betaDelta);
-        this.targetPhi = (Math.PI / 2) - betaRad * 0.5; // Inverted so tilting up looks up
+        this.targetPhi = this.gyroPhiBase - betaRad * 0.5; // Inverted so tilting up looks up
 
         // Clamp
         this.targetPhi = Math.max(this.minPhi, Math.min(this.maxPhi, this.targetPhi));
