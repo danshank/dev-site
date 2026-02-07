@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Note: Gyroscope controls are now handled by camera-controls.js for 3D
     // Scroll animations removed - not needed in 3D mode
+    // Responsive ASCII now handled by CSS container queries
 });
 
 /* ═══ Typing Effect ═══ */

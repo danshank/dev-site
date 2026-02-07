@@ -7,17 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
-
-    <!-- Three.js Import Map -->
-    <script type="importmap">
-    {
-        "imports": {
-            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-        }
-    }
-    </script>
+    <!-- Styles loaded via Vite -->
 </head>
 <body>
     <!-- Boot sequence overlay -->
@@ -390,10 +380,7 @@ infrastructure:
         </div>
     </div>
 
-    <!-- Legacy effects script (typing, glitch) -->
-    <script src="script.js"></script>
-
-    <!-- Three.js 3D scene -->
-    <script type="module" src="js/three-setup.js"></script>
+    <!-- Vite entry point -->
+    <script type="module" src="/src/main.js"></script>
 </body>
 </html>

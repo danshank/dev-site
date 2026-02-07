@@ -7,7 +7,7 @@ import * as THREE from "three";
 import {
 	CSS3DObject,
 	CSS3DRenderer,
-} from "three/addons/renderers/CSS3DRenderer.js";
+} from "three/examples/jsm/renderers/CSS3DRenderer.js";
 import { CameraControls } from "./camera-controls.js";
 
 /**
