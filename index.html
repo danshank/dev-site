@@ -58,24 +58,44 @@
         </div>
         <div class="panel-content">
             <div class="hero">
-                <div class="hero-ascii">
-                    <pre class="ascii-art">
-    ┌─────────────────────────────────────────────────────────┐
-    │                                                         │
-    │   ╔══════════════════════════════════════════════════╗  │
-    │   ║                                                  ║  │
-    │   ║    ██████╗ ███████╗██╗   ██╗                     ║  │
-    │   ║    ██╔══██╗██╔════╝██║   ██║                     ║  │
-    │   ║    ██║  ██║█████╗  ██║   ██║                     ║  │
-    │   ║    ██║  ██║██╔══╝  ╚██╗ ██╔╝                     ║  │
-    │   ║    ██████╔╝███████╗ ╚████╔╝                      ║  │
-    │   ║    ╚═════╝ ╚══════╝  ╚═══╝                       ║  │
-    │   ║                                                  ║  │
-    │   ╚══════════════════════════════════════════════════╝  │
-    │                                                         │
-    └─────────────────────────────────────────────────────────┘
-                    </pre>
+                <div class="hero-ascii" aria-hidden="true">
+                    <!-- SVG-wrapped ASCII for fluid scaling -->
+                    <!-- Full version (480px+) - detailed box art -->
+                    <!-- viewBox: 61 chars * ~6px = 366px wide, 14 lines * ~7.5px = 105px tall -->
+                    <svg class="ascii-svg ascii-full" viewBox="0 0 370 110" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+                        <text class="ascii-text" x="5" y="12" dominant-baseline="hanging">
+                            <tspan x="5" dy="0">┌─────────────────────────────────────────────────────────┐</tspan>
+                            <tspan x="5" dy="1.15em">│                                                         │</tspan>
+                            <tspan x="5" dy="1.15em">│   ╔══════════════════════════════════════════════════╗  │</tspan>
+                            <tspan x="5" dy="1.15em">│   ║                                                  ║  │</tspan>
+                            <tspan x="5" dy="1.15em">│   ║    ██████╗ ███████╗██╗   ██╗                     ║  │</tspan>
+                            <tspan x="5" dy="1.15em">│   ║    ██╔══██╗██╔════╝██║   ██║                     ║  │</tspan>
+                            <tspan x="5" dy="1.15em">│   ║    ██║  ██║█████╗  ██║   ██║                     ║  │</tspan>
+                            <tspan x="5" dy="1.15em">│   ║    ██║  ██║██╔══╝  ╚██╗ ██╔╝                     ║  │</tspan>
+                            <tspan x="5" dy="1.15em">│   ║    ██████╔╝███████╗ ╚████╔╝                      ║  │</tspan>
+                            <tspan x="5" dy="1.15em">│   ║    ╚═════╝ ╚══════╝  ╚═══╝                       ║  │</tspan>
+                            <tspan x="5" dy="1.15em">│   ║                                                  ║  │</tspan>
+                            <tspan x="5" dy="1.15em">│   ╚══════════════════════════════════════════════════╝  │</tspan>
+                            <tspan x="5" dy="1.15em">│                                                         │</tspan>
+                            <tspan x="5" dy="1.15em">└─────────────────────────────────────────────────────────┘</tspan>
+                        </text>
+                    </svg>
+                    <!-- Compact version (<480px) - simpler, readable at small sizes -->
+                    <!-- viewBox: 25 chars * ~6px = 150px wide, 8 lines * ~7.5px = 60px tall -->
+                    <svg class="ascii-svg ascii-compact" viewBox="0 0 150 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+                        <text class="ascii-text" x="5" y="8" dominant-baseline="hanging">
+                            <tspan x="5" dy="0">╔═══════════════════════╗</tspan>
+                            <tspan x="5" dy="1.15em">║                       ║</tspan>
+                            <tspan x="5" dy="1.15em">║   ███▄ ██▀ █ █       ║</tspan>
+                            <tspan x="5" dy="1.15em">║   █  █ █▄  █ █       ║</tspan>
+                            <tspan x="5" dy="1.15em">║   █  █ █▄   █        ║</tspan>
+                            <tspan x="5" dy="1.15em">║   ███▀ ██▄  █        ║</tspan>
+                            <tspan x="5" dy="1.15em">║                       ║</tspan>
+                            <tspan x="5" dy="1.15em">╚═══════════════════════╝</tspan>
+                        </text>
+                    </svg>
                 </div>
+                <span class="sr-only">DEV</span>
                 <div class="hero-content">
                     <div class="prompt-line">
                         <span class="prompt">$</span>
