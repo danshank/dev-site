@@ -449,9 +449,9 @@ export class CameraControls {
         }
 
         // Convert device orientation to camera rotation (relative to calibration point)
-        // Alpha (compass) controls horizontal look
+        // Alpha (compass) controls horizontal look - inverted so turning phone left looks left
         const alphaDelta = THREE.MathUtils.degToRad(alpha - this.gyroAlphaOffset);
-        this.targetTheta = this.gyroThetaBase + alphaDelta;
+        this.targetTheta = this.gyroThetaBase - alphaDelta;
 
         // Beta (tilt) controls vertical look
         // Calculate delta from calibrated beta position
