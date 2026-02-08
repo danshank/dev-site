@@ -254,77 +254,6 @@ body.minimized .terminal-footer {
     padding: 4rem 0;
 }
 
-.hero-ascii {
-    margin-bottom: 2rem;
-    opacity: 0.8;
-    container-type: inline-size;
-    container-name: hero-ascii;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    /* Prevent overlap with content below */
-    flex-shrink: 0;
-    position: relative;
-    z-index: 1;
-}
-
-.hero-content {
-    position: relative;
-    z-index: 2;
-}
-
-/* Screen reader only text */
-.sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-}
-
-/* SVG ASCII art styling */
-.ascii-svg {
-    width: 100%;
-    max-width: 560px;
-    display: block;
-}
-
-.ascii-svg .ascii-text {
-    font-family: 'JetBrains Mono', 'Fira Code', monospace;
-    font-size: 6px;
-    fill: var(--accent-primary);
-    white-space: pre;
-    filter: drop-shadow(0 0 8px rgba(137, 180, 250, 0.5));
-}
-
-/* Container query based switching - responds to panel width, not viewport */
-.ascii-full {
-    display: block;
-    /* viewBox is 370x110 */
-    aspect-ratio: 370 / 110;
-}
-
-.ascii-compact {
-    display: none;
-    /* viewBox is 150x60 */
-    aspect-ratio: 150 / 60;
-}
-
-@container hero-ascii (max-width: 479px) {
-    .ascii-full {
-        display: none;
-    }
-
-    .ascii-compact {
-        display: block;
-        max-width: 280px;
-    }
-}
-
 .prompt-line {
     display: flex;
     align-items: center;
@@ -1271,13 +1200,6 @@ body.minimized .terminal-footer {
     padding: 1rem 0;
     justify-content: flex-start;
 }
-
-.panel-3d .hero-ascii {
-    margin-bottom: 1rem;
-    flex-shrink: 0;
-}
-
-/* ASCII SVG scales automatically via viewBox */
 
 .panel-3d .hero h1 {
     font-size: 2.5rem;
